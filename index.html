@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartChoice - Cheap & Quality Filtered Shopping</title>
+  <title>Shark Deals - Cheap & Quality Filtered Shopping</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -270,7 +270,7 @@
         <option value="Meesho">Meesho</option>
         <option value="Other">Other</option>
       </select>
-      <input type="text" id="search-input" placeholder="Search product name..." onkeyup="applyFilters()">
+      <input type="text" id="search-input" placeholder="Search product (e.g. asian shoes)..." onkeyup="applyFilters()">
       <button class="search-btn" onclick="applyFilters()">Search</button>
     </div>
   </div>
@@ -304,13 +304,19 @@
 
   let masterProductList = [];
 
-  // Google Drive Link to Raw Direct Image URL Converter Logic
+  // Updated Image URL Handler for Google Drive & CDN Links
   function convertDriveLink(driveUrl) {
     if (!driveUrl) return 'https://via.placeholder.com/200?text=No+Image';
+    
+    if (driveUrl.includes('lh3.googleusercontent.com')) {
+      return driveUrl.includes('=s') ? driveUrl : `${driveUrl}=s1000`;
+    }
+
     const match = driveUrl.match(/(?:(?:\/d\/)|(?:id=))([a-zA-Z0-9_-]+)/);
     if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      return `https://lh3.googleusercontent.com/d/${match[1]}=s1000`;
     }
+    
     return driveUrl;
   }
 
@@ -323,7 +329,6 @@
       const data = await response.json();
 
       if (data) {
-        // Owner App ke Firebase Schema ke sath Sync mapping
         masterProductList = Object.keys(data).map(key => ({
           id: key,
           name: data[key].name || "Unnamed Product",
@@ -348,7 +353,7 @@
     return `
       <div class="card">
         <span class="platform-tag">${p.platform}</span>
-        <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200?text=Image+Error'">
+        <img src="${p.imageUrl}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+Error';">
         <div>
           <div class="card-title">${p.name}</div>
           <div class="meta-row">
@@ -361,36 +366,44 @@
     `;
   }
 
+  // Smart Keyword Search Filter Function
   function applyFilters() {
     const selectedPlatform = document.getElementById('platform-select').value;
-    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    const rawQuery = document.getElementById('search-input').value.toLowerCase().trim();
 
-    // 1. Filter by Platform & Search Query
+    // Search query ko individual words (tokens) me todna
+    const searchKeywords = rawQuery.split(/\s+/).filter(word => word.length > 0);
+
     let filtered = masterProductList.filter(item => {
+      // 1. Platform Check
       const matchPlatform = (selectedPlatform === "All") || (item.platform === selectedPlatform);
-      const matchSearch = item.name.toLowerCase().includes(query);
+      
+      // 2. Smart Keyword Matching (Har word title me hona chahiye)
+      const titleLower = item.name.toLowerCase();
+      const matchSearch = searchKeywords.every(keyword => titleLower.includes(keyword));
+
       return matchPlatform && matchSearch;
     });
 
-    // 2. Sort by Lowest Price First
+    // Sort by Lowest Price First
     filtered.sort((a, b) => a.price - b.price);
 
     // Reset Views
     document.getElementById('extended-section').classList.add('hidden');
     document.getElementById('more-btn-box').classList.remove('hidden');
 
-    // 3. Render Top 3
+    // Render Top 3
     const top3 = filtered.slice(0, 3);
     const top3Grid = document.getElementById('top-3-grid');
     
     if (top3.length === 0) {
-      top3Grid.innerHTML = `<p style="grid-column: 1/-1; color: #94a3b8; text-align: center;">Koi products nahi mile. Dynamic products add karne ke liye Admin app ka use karein.</p>`;
+      top3Grid.innerHTML = `<p style="grid-column: 1/-1; color: #94a3b8; text-align: center;">Koi products nahi mile.</p>`;
       document.getElementById('more-btn-box').classList.add('hidden');
       return;
     }
     top3Grid.innerHTML = top3.map(p => createCardHTML(p)).join('');
 
-    // 4. Render Extended Results
+    // Render Extended Results
     const extended = filtered.slice(3);
     const extGrid = document.getElementById('extended-grid');
     extGrid.innerHTML = extended.map(p => createCardHTML(p)).join('');
