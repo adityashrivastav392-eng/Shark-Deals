@@ -206,9 +206,15 @@
       border-radius: 6px;
     }
 
+    /* Action Buttons Row (Buy Now + Share) */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     .buy-btn {
-      display: block;
-      width: 100%;
+      flex: 1;
       text-align: center;
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: #ffffff;
@@ -221,6 +227,26 @@
 
     .buy-btn:hover {
       opacity: 0.9;
+    }
+
+    .share-btn {
+      background: #25d366;
+      color: #ffffff;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .share-btn:hover {
+      background: #20ba5a;
+      transform: scale(1.05);
     }
 
     /* Show More Button Area */
@@ -304,7 +330,7 @@
 
   let masterProductList = [];
 
-  // Updated Image URL Handler for Google Drive & CDN Links
+  // Image Link Converter Function
   function convertDriveLink(driveUrl) {
     if (!driveUrl) return 'https://via.placeholder.com/200?text=No+Image';
     
@@ -349,11 +375,33 @@
     }
   }
 
+  // Direct WhatsApp & Share Logic
+  function shareProduct(name, price, link) {
+    const shareText = `🔥 *Shark Deals Alert!* 🔥\n\n*${name}*\n💰 Price: ₹${price} Only!\n\n👉 Buy Here: ${link}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+    
+    // Mobile Web Share API agar Browser support karta hai
+    if (navigator.share) {
+      navigator.share({
+        title: 'Shark Deals',
+        text: shareText,
+        url: link
+      }).catch(() => {
+        window.open(whatsappUrl, '_blank');
+      });
+    } else {
+      window.open(whatsappUrl, '_blank');
+    }
+  }
+
   function createCardHTML(p) {
+    // Escape special characters in name for safely passing into function
+    const safeName = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    
     return `
       <div class="card">
         <span class="platform-tag">${p.platform}</span>
-        <img src="${p.imageUrl}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+Error';">
+        <img src="${p.imageUrl}" alt="${safeName}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+Error';">
         <div>
           <div class="card-title">${p.name}</div>
           <div class="meta-row">
@@ -361,7 +409,14 @@
             <span class="stock-tag">Stock: ${p.stock}</span>
           </div>
         </div>
-        <a href="${p.affiliateLink}" target="_blank" rel="noopener noreferrer" class="buy-btn">Buy Now</a>
+        <div class="btn-group">
+          <a href="${p.affiliateLink}" target="_blank" rel="noopener noreferrer" class="buy-btn">Buy Now</a>
+          <button class="share-btn" onclick="shareProduct('${safeName}', '${p.price}', '${p.affiliateLink}')" title="Share Deal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     `;
   }
@@ -371,28 +426,22 @@
     const selectedPlatform = document.getElementById('platform-select').value;
     const rawQuery = document.getElementById('search-input').value.toLowerCase().trim();
 
-    // Search query ko individual words (tokens) me todna
     const searchKeywords = rawQuery.split(/\s+/).filter(word => word.length > 0);
 
     let filtered = masterProductList.filter(item => {
-      // 1. Platform Check
       const matchPlatform = (selectedPlatform === "All") || (item.platform === selectedPlatform);
       
-      // 2. Smart Keyword Matching (Har word title me hona chahiye)
       const titleLower = item.name.toLowerCase();
       const matchSearch = searchKeywords.every(keyword => titleLower.includes(keyword));
 
       return matchPlatform && matchSearch;
     });
 
-    // Sort by Lowest Price First
     filtered.sort((a, b) => a.price - b.price);
 
-    // Reset Views
     document.getElementById('extended-section').classList.add('hidden');
     document.getElementById('more-btn-box').classList.remove('hidden');
 
-    // Render Top 3
     const top3 = filtered.slice(0, 3);
     const top3Grid = document.getElementById('top-3-grid');
     
@@ -403,7 +452,6 @@
     }
     top3Grid.innerHTML = top3.map(p => createCardHTML(p)).join('');
 
-    // Render Extended Results
     const extended = filtered.slice(3);
     const extGrid = document.getElementById('extended-grid');
     extGrid.innerHTML = extended.map(p => createCardHTML(p)).join('');
@@ -423,4 +471,4 @@
 </script>
 
 </body>
-</html>
+  </html>
