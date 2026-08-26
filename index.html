@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartChoice - Cheap & Quality Filtered Shopping</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      padding: 20px 15px 50px 15px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Header Section */
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    /* Controls / Filter Box */
+    .controls-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    @media (min-width: 640px) {
+      .filter-grid {
+        grid-template-columns: 200px 1fr 120px;
+      }
+    }
+
+    select, input {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    select:focus, input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+
+    .search-btn {
+      background: #10b981;
+      color: #0f172a;
+      font-weight: 700;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .search-btn:hover {
+      background: #34d399;
+      transform: translateY(-1px);
+    }
+
+    /* Section Headings */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 15px;
+    }
+
+    .badge-top3 {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    /* Product Card */
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #10b981;
+    }
+
+    .platform-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #0f172a;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #10b981;
+    }
+
+    .stock-tag {
+      background: #334155;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .buy-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .buy-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Show More Button Area */
+    .action-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .show-more-btn {
+      background: transparent;
+      border: 2px solid #10b981;
+      color: #10b981;
+      padding: 12px 30px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .show-more-btn:hover {
+      background: #10b981;
+      color: #0f172a;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Shark Deals</h1>
+    <p>Aapke favourite platform se sabse sasti aur high-quality items</p>
+  </header>
+
+  <!-- Search & Filter Bar -->
+  <div class="controls-card">
+    <div class="filter-grid">
+      <select id="platform-select" onchange="applyFilters()">
+        <option value="All">All Platforms</option>
+        <option value="Amazon">Amazon</option>
+        <option value="Flipkart">Flipkart</option>
+        <option value="Meesho">Meesho</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="text" id="search-input" placeholder="Search product name..." onkeyup="applyFilters()">
+      <button class="search-btn" onclick="applyFilters()">Search</button>
+    </div>
+  </div>
+
+  <!-- Top 3 Best Quality & Cheap Section -->
+  <div id="top-section">
+    <div class="section-title">
+      <span>✨ Top 3 Best Value Choices</span>
+      <span class="badge-top3">Lowest Price First</span>
+    </div>
+    <div id="top-3-grid" class="product-grid"></div>
+  </div>
+
+  <!-- Show More Action Button -->
+  <div class="action-container" id="more-btn-box">
+    <button class="show-more-btn" onclick="showMoreProducts()">Show More Products</button>
+  </div>
+
+  <!-- Remaining Products Section -->
+  <div id="extended-section" class="hidden">
+    <div class="section-title">
+      <span>📦 More Filtered Results</span>
+    </div>
+    <div id="extended-grid" class="product-grid"></div>
+  </div>
+</div>
+
+<script>
+  // Firebase Realtime Database Endpoint
+  const FIREBASE_DATABASE_URL = "https://kayasth-vision-c664a-default-rtdb.firebaseio.com";
+
+  let masterProductList = [];
+
+  // Google Drive Link to Raw Direct Image URL Converter Logic
+  function convertDriveLink(driveUrl) {
+    if (!driveUrl) return 'https://via.placeholder.com/200?text=No+Image';
+    const match = driveUrl.match(/(?:(?:\/d\/)|(?:id=))([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+    return driveUrl;
+  }
+
+  // Fetch Data from Realtime Database REST API
+  async function fetchProductsFromFirebase() {
+    const endpoint = FIREBASE_DATABASE_URL.trim().replace(/\/$/, "") + "/products.json";
+
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
+
+      if (data) {
+        // Owner App ke Firebase Schema ke sath Sync mapping
+        masterProductList = Object.keys(data).map(key => ({
+          id: key,
+          name: data[key].name || "Unnamed Product",
+          platform: data[key].platform || "Other",
+          price: parseFloat(data[key].price) || 0,
+          stock: data[key].stock || 0,
+          imageUrl: convertDriveLink(data[key].imageUrl),
+          affiliateLink: data[key].affiliateLink || "#"
+        }));
+      } else {
+        masterProductList = [];
+      }
+      applyFilters();
+    } catch (err) {
+      console.error("Firebase REST API Fetch Error:", err);
+      masterProductList = [];
+      applyFilters();
+    }
+  }
+
+  function createCardHTML(p) {
+    return `
+      <div class="card">
+        <span class="platform-tag">${p.platform}</span>
+        <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200?text=Image+Error'">
+        <div>
+          <div class="card-title">${p.name}</div>
+          <div class="meta-row">
+            <span class="price">₹${p.price}</span>
+            <span class="stock-tag">Stock: ${p.stock}</span>
+          </div>
+        </div>
+        <a href="${p.affiliateLink}" target="_blank" rel="noopener noreferrer" class="buy-btn">Buy Now</a>
+      </div>
+    `;
+  }
+
+  function applyFilters() {
+    const selectedPlatform = document.getElementById('platform-select').value;
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+
+    // 1. Filter by Platform & Search Query
+    let filtered = masterProductList.filter(item => {
+      const matchPlatform = (selectedPlatform === "All") || (item.platform === selectedPlatform);
+      const matchSearch = item.name.toLowerCase().includes(query);
+      return matchPlatform && matchSearch;
+    });
+
+    // 2. Sort by Lowest Price First
+    filtered.sort((a, b) => a.price - b.price);
+
+    // Reset Views
+    document.getElementById('extended-section').classList.add('hidden');
+    document.getElementById('more-btn-box').classList.remove('hidden');
+
+    // 3. Render Top 3
+    const top3 = filtered.slice(0, 3);
+    const top3Grid = document.getElementById('top-3-grid');
+    
+    if (top3.length === 0) {
+      top3Grid.innerHTML = `<p style="grid-column: 1/-1; color: #94a3b8; text-align: center;">Koi products nahi mile. Dynamic products add karne ke liye Admin app ka use karein.</p>`;
+      document.getElementById('more-btn-box').classList.add('hidden');
+      return;
+    }
+    top3Grid.innerHTML = top3.map(p => createCardHTML(p)).join('');
+
+    // 4. Render Extended Results
+    const extended = filtered.slice(3);
+    const extGrid = document.getElementById('extended-grid');
+    extGrid.innerHTML = extended.map(p => createCardHTML(p)).join('');
+
+    if (extended.length === 0) {
+      document.getElementById('more-btn-box').classList.add('hidden');
+    }
+  }
+
+  function showMoreProducts() {
+    document.getElementById('extended-section').classList.remove('hidden');
+    document.getElementById('more-btn-box').classList.add('hidden');
+  }
+
+  // Initial Fetching on Page Load
+  fetchProductsFromFirebase();
+</script>
+
+</body>
+</html>
