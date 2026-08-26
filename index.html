@@ -3,7 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
   <title>Shark Deals - Cheap & Quality Filtered Shopping</title>
+  <meta name="title" content="Shark Deals - Cheap & Quality Filtered Shopping">
+  <meta name="description" content="Aapke favourite platform se sabse sasti aur high-quality items ek jagah par dhoondhein. Amazon, Flipkart, Meesho aur bohot kuch!">
+
+  <!-- Favicon / Logo Link -->
+  <link rel="icon" type="image/png" href="l.PNG">
+  <link rel="apple-touch-icon" href="l.PNG">
+
+  <!-- Open Graph / WhatsApp / Facebook Preview Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shark-deals.onrender.com">
+  <meta property="og:title" content="Shark Deals - Cheap & Quality Filtered Shopping">
+  <meta property="og:description" content="Aapke favourite platform se sabse sasti aur high-quality items ek jagah par dhoondhein. Amazon, Flipkart, Meesho aur bohot kuch!">
+  <meta property="og:image" content="l.PNG">
+
+  <!-- Twitter Preview Meta Tags -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://shark-deals.onrender.com">
+  <meta property="twitter:title" content="Shark Deals - Cheap & Quality Filtered Shopping">
+  <meta property="twitter:description" content="Aapke favourite platform se sabse sasti aur high-quality items ek jagah par dhoondhein. Amazon, Flipkart, Meesho aur bohot kuch!">
+  <meta property="twitter:image" content="l.PNG">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -377,15 +400,20 @@
 
   // Direct WhatsApp & Share Logic
   function shareProduct(name, price, link) {
-    const shareText = `🔥 *Shark Deals Alert!* 🔥\n\n*${name}*\n💰 Price: ₹${price} Only!\n\n👉 Buy Here: ${link}`;
+    // Product link se https:// remove kar rahe hain taaki preview na bane
+    const cleanAffiliateLink = link.replace(/^https?:\/\//, '');
+    
+    // Website link me https:// rakha hai taaki Shark Deals ka WhatsApp ad card generate ho
+    const siteLink = "https://shark-deals.onrender.com";
+
+    const shareText = `🔥 *Shark Deals Alert!* 🔥\n\n*${name}*\n💰 Price: ₹${price} Only!\n\n👉 Buy Product Here:\n${cleanAffiliateLink}\n\n✨ Aisi hi sasti deals filter karne ke liye visit karein:\n${siteLink}`;
+    
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
     
-    // Mobile Web Share API agar Browser support karta hai
     if (navigator.share) {
       navigator.share({
         title: 'Shark Deals',
-        text: shareText,
-        url: link
+        text: shareText
       }).catch(() => {
         window.open(whatsappUrl, '_blank');
       });
@@ -395,7 +423,6 @@
   }
 
   function createCardHTML(p) {
-    // Escape special characters in name for safely passing into function
     const safeName = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     
     return `
@@ -471,4 +498,4 @@
 </script>
 
 </body>
-  </html>
+</html>
