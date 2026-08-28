@@ -44,11 +44,89 @@
       color: #f8fafc;
       min-height: 100vh;
       padding: 20px 15px 50px 15px;
+      position: relative;
     }
 
     .container {
       max-width: 1100px;
       margin: 0 auto;
+    }
+
+    /* Top Bar Navigation Styles */
+    .top-nav {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 0;
+    }
+
+    .hamburger-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      font-size: 1.5rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .hamburger-btn:hover {
+      background: #334155;
+    }
+
+    /* Navigation Drawer Menu */
+    .nav-menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 250px;
+      height: 100%;
+      background: #1e293b;
+      border-left: 1px solid #334155;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .nav-menu.active {
+      right: 0;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .menu-item {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      text-align: left;
+      cursor: pointer;
+      font-weight: 600;
+      transition: border-color 0.2s;
+    }
+
+    .menu-item:hover {
+      border-color: #10b981;
+      color: #10b981;
     }
 
     /* Header Section */
@@ -93,7 +171,7 @@
       }
     }
 
-    select, input {
+    select, input, textarea {
       background: #0f172a;
       border: 1px solid #475569;
       color: #fff;
@@ -105,7 +183,7 @@
       width: 100%;
     }
 
-    select:focus, input:focus {
+    select:focus, input:focus, textarea:focus {
       border-color: #10b981;
       box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
     }
@@ -297,6 +375,99 @@
       box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
     }
 
+    /* Floating Plus Button (FAB) */
+    .fab-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #0f172a;
+      font-size: 2rem;
+      font-weight: bold;
+      border: none;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: transform 0.2s;
+    }
+
+    .fab-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Modal Overlay Box System */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      padding: 15px;
+    }
+
+    .modal-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      padding: 25px;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .modal-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #10b981;
+    }
+
+    .modal-card p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .modal-card input, .modal-card textarea {
+      margin-bottom: 12px;
+    }
+
+    .modal-card .submit-btn {
+      width: 100%;
+      background: #10b981;
+      color: #0f172a;
+      border: none;
+      padding: 12px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -305,6 +476,23 @@
 <body>
 
 <div class="container">
+  <!-- Top Right Menu Navigation Trigger -->
+  <div class="top-nav">
+    <button class="hamburger-btn" onclick="toggleNavMenu()" title="Menu">☰</button>
+  </div>
+
+  <!-- Side Drawer Menu Overlay -->
+  <div class="nav-menu" id="side-nav">
+    <div class="menu-header">
+      <h3 style="color:#10b981;">Shark Menu</h3>
+      <button class="close-btn" onclick="toggleNavMenu()">✕</button>
+    </div>
+    <button class="menu-item" onclick="openAuthModal('login')">🔑 Login</button>
+    <button class="menu-item" onclick="openAuthModal('signup')">📝 Sign Up</button>
+    <button class="menu-item" onclick="downloadApp()">📱 Download App</button>
+    <button class="menu-item" onclick="openFamily()">👨‍👩‍👧‍👦 Family</button>
+  </div>
+
   <header>
     <h1>Shark Deals</h1>
     <p>Aapke favourite platform se sabse sasti aur high-quality items</p>
@@ -346,6 +534,31 @@
     </div>
     <div id="extended-grid" class="product-grid"></div>
   </div>
+  </div>
+  <!-- Floating (+ Button) for Submitting Requested Link -->
+<button class="fab-btn" onclick="openRequestModal()" title="Request Product">+</button>
+
+<!-- Product Request Modal -->
+<div class="modal-overlay hidden" id="request-modal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeRequestModal()">✕</button>
+    <h3>Request/Submit Deal</h3>
+    <p>Enter your favourite product link here, then we can review it and if we like it, then we upload it on our site.</p>
+    <textarea id="req-link-input" rows="4" placeholder="Paste product link here..."></textarea>
+    <button class="submit-btn" onclick="submitProductRequest()">Submit Link</button>
+  </div>
+</div>
+
+<!-- Auth (Login/Signup) Modal -->
+<div class="modal-overlay hidden" id="auth-modal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <h3 id="auth-title">Account Auth</h3>
+    <input type="text" id="auth-name" placeholder="Full Name" class="hidden">
+    <input type="email" id="auth-email" placeholder="Email Address">
+    <input type="password" id="auth-pass" placeholder="Password">
+    <button class="submit-btn" id="auth-submit-btn" onclick="handleAuthSubmit()">Submit</button>
+  </div>
 </div>
 
 <script>
@@ -353,6 +566,156 @@
   const FIREBASE_DATABASE_URL = "https://kayasth-vision-c664a-default-rtdb.firebaseio.com";
 
   let masterProductList = [];
+  let currentAuthMode = 'login';
+
+  // Toggle Navigation Side Menu
+  function toggleNavMenu() {
+    const nav = document.getElementById('side-nav');
+    nav.classList.toggle('active');
+  }
+
+  function downloadApp() {
+    toggleNavMenu();
+    alert("Shark Deals Mobile App Coming Soon!");
+  }
+
+  function openFamily() {
+    toggleNavMenu();
+    alert("Family Features & Group Deals Section Coming Soon!");
+  }
+
+  // Request Deal Modal Logic
+  function openRequestModal() {
+    document.getElementById('request-modal').classList.remove('hidden');
+  }
+
+  function closeRequestModal() {
+    document.getElementById('request-modal').classList.add('hidden');
+    document.getElementById('req-link-input').value = "";
+  }
+
+  async function submitProductRequest() {
+    const link = document.getElementById('req-link-input').value.trim();
+    if (!link) {
+      alert("Kripya product link enter karein!");
+      return;
+    }
+
+    const requestEndpoint = FIREBASE_DATABASE_URL.trim().replace(/\/$/, "") + "/product_requests.json";
+
+    try {
+      const resp = await fetch(requestEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productLink: link,
+          submittedAt: new Date().toISOString()
+        })
+      });
+
+      if (resp.ok) {
+        alert("Aapka link safaltapoorvak request bucket mein bhej diya gaya hai!");
+        closeRequestModal();
+      } else {
+        alert("Submitting me error aayi. Please retry.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network Error!");
+    }
+  }
+
+  // Account Authentication Logic
+  function openAuthModal(mode) {
+    toggleNavMenu();
+    currentAuthMode = mode;
+    const modal = document.getElementById('auth-modal');
+    const title = document.getElementById('auth-title');
+    const nameField = document.getElementById('auth-name');
+    const submitBtn = document.getElementById('auth-submit-btn');
+
+    if (mode === 'signup') {
+      title.innerText = "Create New Account";
+      nameField.classList.remove('hidden');
+      submitBtn.innerText = "Sign Up";
+    } else {
+      title.innerText = "User Login";
+      nameField.classList.add('hidden');
+      submitBtn.innerText = "Login";
+    }
+    modal.classList.remove('hidden');
+  }
+
+  function closeAuthModal() {
+    document.getElementById('auth-modal').classList.add('hidden');
+    document.getElementById('auth-name').value = "";
+    document.getElementById('auth-email').value = "";
+    document.getElementById('auth-pass').value = "";
+  }
+
+  async function handleAuthSubmit() {
+    const email = document.getElementById('auth-email').value.trim();
+    const pass = document.getElementById('auth-pass').value.trim();
+    const name = document.getElementById('auth-name').value.trim();
+
+    if (!email || !pass) {
+      alert("Please credentials fill karein!");
+      return;
+    }
+
+    const usersEndpoint = FIREBASE_DATABASE_URL.trim().replace(/\/$/, "") + "/users.json";
+
+    if (currentAuthMode === 'signup') {
+      if (!name) {
+        alert("Name enter karein!");
+        return;
+      }
+      try {
+        const resp = await fetch(usersEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: pass,
+            createdAt: new Date().toISOString()
+          })
+        });
+        if (resp.ok) {
+          alert("Account successfully create ho gaya!");
+          closeAuthModal();
+        }
+      } catch (e) {
+        console.error(e);
+        alert("Sign Up Fails!");
+      }
+    } else {
+      // Direct Login Validation from Firebase Data Users bucket
+      try {
+        const resp = await fetch(usersEndpoint);
+        const usersData = await resp.json();
+        let userFound = false;
+
+        if (usersData) {
+          Object.keys(usersData).forEach(k => {
+            if (usersData[k].email === email && usersData[k].password === pass) {
+              userFound = true;
+            }
+          });
+        }
+
+        if (userFound) {
+          alert("Login successful!");
+          closeAuthModal();
+        } else {
+          alert("Invalid Email/Password combination!");
+        }
+      } catch (e) {
+        console.error(e);
+        alert("Login Error!");
+      }
+    }
+  }
 
   // Image Link Converter Function
   function convertDriveLink(driveUrl) {
@@ -401,10 +764,7 @@
 
   // Direct WhatsApp & Share Logic
   function shareProduct(name, price, link) {
-    // Product link se https:// remove kar rahe hain taaki preview na bane
     const cleanAffiliateLink = link.replace(/^https?:\/\//, '');
-    
-    // Website link me https:// rakha hai taaki Shark Deals ka WhatsApp ad card generate ho
     const siteLink = "https://shark-deals.onrender.com";
 
     const shareText = `🔥 *Shark Deals Alert!* 🔥\n\n*${name}*\n💰 Price: ₹${price} Only!\n\n👉 Buy Product Here:\n${cleanAffiliateLink}\n\n✨ Aisi hi sasti deals filter karne ke liye visit karein:\n${siteLink}`;
@@ -449,18 +809,20 @@
     `;
   }
 
-  // Smart Keyword Search Filter Function
+  // Updated Keyword Search Filter Function
   function applyFilters() {
     const selectedPlatform = document.getElementById('platform-select').value;
     const rawQuery = document.getElementById('search-input').value.toLowerCase().trim();
 
-    const searchKeywords = rawQuery.split(/\s+/).filter(word => word.length > 0);
+    // Unique non-empty search words
+    const searchKeywords = [...new Set(rawQuery.split(/\s+/))].filter(word => word.length > 0);
 
     let filtered = masterProductList.filter(item => {
       const matchPlatform = (selectedPlatform === "All") || (item.platform === selectedPlatform);
       
       const titleLower = item.name.toLowerCase();
-      const matchSearch = searchKeywords.every(keyword => titleLower.includes(keyword));
+      // 'some()' logic use kiya hai taaki kam se kam EK keyword match hone par product mil jaye
+      const matchSearch = searchKeywords.length === 0 || searchKeywords.some(keyword => titleLower.includes(keyword));
 
       return matchPlatform && matchSearch;
     });
